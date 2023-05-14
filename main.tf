@@ -58,6 +58,11 @@ resource "aws_s3_bucket_acl" "bucket" {
 # BUCKET OBJECTS #
 ##################
 resource "aws_s3_object" "app" {
+  depends_on = [
+    aws_s3_bucket_ownership_controls.control,
+    aws_s3_bucket_public_access_block.control,
+  ]
+  
   acl          = "public-read"
   key          = "index.html"
   bucket       = aws_s3_bucket.app.id
