@@ -1,4 +1,6 @@
-# PROVIDER
+############
+# PROVIDER #
+############
 provider "aws" {
   region = var.region
 
@@ -8,8 +10,9 @@ provider "aws" {
     }
   }
 }
-
-# CREATE BUCKET
+#################
+# CREATE BUCKET #
+#################
 resource "random_uuid" "randomid" {}
 
 resource "aws_s3_bucket" "app" {
@@ -22,7 +25,9 @@ resource "aws_s3_bucket" "app" {
   force_destroy = true
 }
 
-# BUCKET PERMISSIONS
+######################
+# BUCKET PERMISSIONS #
+######################
 resource "aws_s3_bucket_ownership_controls" "control" {
   bucket = aws_s3_bucket.control.id
   rule {
@@ -49,7 +54,9 @@ resource "aws_s3_bucket_acl" "bucket" {
   acl    = "public-read"
 }
 
-# BUCKET OBJECTS
+##################
+# BUCKET OBJECTS #
+##################
 resource "aws_s3_object" "app" {
   acl          = "public-read"
   key          = "index.html"
@@ -58,7 +65,9 @@ resource "aws_s3_object" "app" {
   content_type = "text/html"
 }
 
-# BUCKET 'Static website hosting' CONFIGURATIONS
+##################################################
+# BUCKET 'Static website hosting' CONFIGURATIONS #
+##################################################
 resource "aws_s3_bucket_website_configuration" "terramino" {
   bucket = aws_s3_bucket.app.bucket
 
