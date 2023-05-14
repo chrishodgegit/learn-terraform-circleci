@@ -1,3 +1,4 @@
+# PROVIDER
 provider "aws" {
   region = var.region
 
@@ -8,6 +9,7 @@ provider "aws" {
   }
 }
 
+# CREATE BUCKET
 resource "random_uuid" "randomid" {}
 
 resource "aws_s3_bucket" "app" {
@@ -20,6 +22,34 @@ resource "aws_s3_bucket" "app" {
   force_destroy = true
 }
 
+# BUCKET PERMISSIONS
+resource "aws_s3_bucket_ownership_controls" "control" {
+  bucket = aws_s3_bucket.control.id
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+}
+
+resource "aws_s3_bucket_public_access_block" "control" {
+  bucket = aws_s3_bucket.app.id
+
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+}
+
+resource "aws_s3_bucket_acl" "bucket" {
+  depends_on = [
+    aws_s3_bucket_ownership_controls.control,
+    aws_s3_bucket_public_access_block.control,
+  ]
+
+  bucket = aws_s3_bucket.app.id
+  acl    = "public-read"
+}
+
+# BUCKET OBJECTS
 resource "aws_s3_object" "app" {
   acl          = "public-read"
   key          = "index.html"
@@ -28,11 +58,7 @@ resource "aws_s3_object" "app" {
   content_type = "text/html"
 }
 
-resource "aws_s3_bucket_acl" "bucket" {
-  bucket = aws_s3_bucket.app.id
-  acl    = "public-read"
-}
-
+# BUCKET 'Static website hosting' CONFIGURATIONS
 resource "aws_s3_bucket_website_configuration" "terramino" {
   bucket = aws_s3_bucket.app.bucket
 
