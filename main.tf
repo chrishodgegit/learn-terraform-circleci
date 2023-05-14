@@ -29,7 +29,7 @@ resource "aws_s3_bucket" "app" {
 # BUCKET PERMISSIONS #
 ######################
 resource "aws_s3_bucket_ownership_controls" "control" {
-  bucket = aws_s3_bucket.control.id
+  bucket = aws_s3_bucket.app.id
   rule {
     object_ownership = "BucketOwnerPreferred"
   }
